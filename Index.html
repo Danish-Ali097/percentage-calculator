@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>index</title>
+</head>
+<body>
+	<div id="header">
+		<h1>Percentage Calculator</h1>
+		<hr/>
+	</div>
+	<div id="container">
+		<!--animation-->
+		<div id="animate">
+			<h2>loading...</h2>
+		</div>
+		<!--animation-->
+		<div id="main">
+			
+				<input type="number" id="amount" name="amount" placeholder="Amount"/>
+				<input type="number" id="percentage" name="percentage" placeholder="Percentage" /><br/>
+				<input type="text" id="result" placeholder="Result" readonly/><br/>
+				<button id="calbtn" onclick="calculate()">Calculate</button>
+				<button id="clrbtn" onclick="reset()">Clear Storage</button>
+				<br/>
+				<hr/>
+				<div id="table">
+					
+				</div>
+		</div>
+	</div>
+	<script>
+		var elem, output, index;
+		output = '<table><th>Amount</th><th>Percentage</th><th>Result</th>';
+		window.onload = function (){
+			//alert("load call");
+			window.setTimeout(animate,3000);
+			elem = document.getElementById("table");
+			if ( localStorage.getItem("index")===null){
+				index = 0;
+			}
+			else{
+				index = localStorage.getItem("index");
+			}
+			populate();
+		}
+		function animate(){
+			var attr = document.getElementById("animate").setAttribute("style","display:none;");
+			 //alert("animate display : "+attr);
+			 document.getElementById("main").setAttribute("style","display:block;");
+		}
+		function calculate()
+		{
+			console.log("index : "+index);
+			var am = document.getElementById('amount').value;
+			//console.log(am);
+			var per = document.getElementById('percentage').value;
+			//console.log(per);
+			var res = document.getElementById('result');
+			 if( am != '' || per != '' ){
+			 var reslt = (am / 100) * per;
+			 res.value = reslt;
+			 if (typeof(Storage) !== "undefined") {
+				  // Store
+				  //var obj ={amount : am, percentage : per, result : reslt};
+				  		var ind = JSON.parse(localStorage.getItem("index"));
+						//console.log(ind);
+						var amnt=[];
+						var prcnt=[];
+						var rslt=[];
+						var amnt_ = JSON.parse(localStorage.getItem("amount"));
+						var prcnt_ = JSON.parse(localStorage.getItem("percentage"));
+						var rslt_ = JSON.parse(localStorage.getItem("result"));
+						for(var i = 0 ; i < ind ;i++){
+							amnt[i] = amnt_[i];
+							prcnt[i] = prcnt_[i];
+							rslt[i] = rslt_[i];
+						}
+				  
+				  amnt[index] = am;
+				  prcnt[index] = per;
+				  rslt[index] = reslt;
+				  index++;
+				  localStorage.setItem("amount", JSON.stringify(amnt));
+				  localStorage.setItem("percentage", JSON.stringify(prcnt));
+				  localStorage.setItem("result", JSON.stringify(rslt));
+				  localStorage.setItem("index", JSON.stringify(index));
+				  location.reload();
+				} else {
+				  alert("Sorry, your browser does not support Web Storage...");
+				}
+			}
+			 else{
+			 	alert("Please fill up all fields!!");
+			 }
+		}
+		function reset(){
+			if(confirm("Do You want to reset the data?")){
+				localStorage.clear();
+				location.reload();
+			}
+		}
+		function populate (){
+			console.log("populate call");
+			if(typeof(Storage) !== "undefined")
+				{
+					console.log(localStorage);
+					if (localStorage.length !== 0){
+						var ind = JSON.parse(localStorage.getItem("index"));
+						console.log("var type: "+typeof(ind)+"var value"+ind);
+						typeof(ind);
+						var amnt = JSON.parse(localStorage.getItem("amount"));
+						var prcnt = JSON.parse(localStorage.getItem("percentage"));
+						var rslt = JSON.parse(localStorage.getItem("result"));
+						for(var i = 0 ; i < ind ;i++){
+							output += '<tr><td>'+amnt[i]+'</td>';
+							output += '<td>'+prcnt[i]+'</td>';
+							output += '<td>'+rslt[i]+'</td></tr>';
+						}
+						output += '</table>'
+						console.log(output);
+						elem.innerHTML = output;
+					}else
+					{
+					  alert("Sorry, local storage does not contain any data");
+					}
+				}else
+				{
+				  alert("Sorry, your browser does not support Web Storage...");
+				}
+		}
+	</script>
+</body>
+</html>
